@@ -1,0 +1,25 @@
+{
+  "name": "missing_pytest_plugin",
+  "description": "Tests pass locally where pytest-mock is installed, but CI installs only the top-level requirements and the plugin is missing, so collection fails with ModuleNotFoundError. A classic 'forgot to add it to requirements' drift.",
+  "source": "https://pytest-mock.readthedocs.io/ (representative of the common missing-test-dependency failure)",
+  "ground_truth": {"category": "package_missing", "key": "pytest-mock"},
+  "traceback": "ImportError while loading conftest.\nE   ModuleNotFoundError: No module named 'pytest_mock'",
+  "base": {
+    "python_version": "3.11.6",
+    "python_implementation": "CPython",
+    "platform_system": "Linux",
+    "platform_machine": "x86_64",
+    "libc": "glibc 2.35",
+    "packages": {
+      "pytest": "7.4.3",
+      "pytest-mock": "3.12.0",
+      "requests": "2.31.0",
+      "certifi": "2023.11.17"
+    },
+    "env_var_names": ["CI", "HOME", "PATH", "PYTHONPATH", "VIRTUAL_ENV"]
+  },
+  "working": {},
+  "failing": {
+    "packages": {"pytest-mock": null, "certifi": "2024.2.2"}
+  }
+}

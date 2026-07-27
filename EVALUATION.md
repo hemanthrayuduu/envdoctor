@@ -51,9 +51,38 @@ noise case yields a high-confidence false positive**. It runs on every push and
 pull request (see `.github/workflows/ci.yml`), so a change that degrades the
 ranking cannot merge.
 
-## Roadmap for the corpus
+## Real-world corpus
 
-The synthetic corpus proves the engine against controlled faults. The next step
-toward real-world fidelity is a curated set of mined "works locally, fails in
-CI" cases (from public issues/Q&A where the accepted answer names the cause)
-under `evaluation/cases/`. Contributions there are especially welcome.
+Alongside the synthetic generator, `evaluation/cases/*.json` holds curated
+scenarios distilled from well-documented, real-world "works locally, fails in
+CI" failures. Each file names the ground-truth cause and cites an authoritative
+reference for the underlying breakage:
+
+| Case | Drift | Ground truth | Reference |
+|------|-------|--------------|-----------|
+| `01_missing_test_plugin` | `pytest-mock` not in CI requirements | `package_missing` | pytest-mock docs |
+| `02_urllib3_v2_major_bump` | urllib3 1.26 → 2.x removed APIs | `version_mismatch` | urllib3 v2 migration guide |
+| `03_python312_removed_distutils` | Python 3.11 → 3.12 dropped `distutils` | `python_version` | Python 3.12 "What's New" |
+| `04_alpine_musl_wheel` | glibc → musl (Alpine) wheel gap | `libc` | PEP 656 (musllinux) |
+| `05_missing_secret_key_env` | Django `SECRET_KEY` unset in CI | `env_var_missing` | Django settings docs |
+| `06_arch_mismatch_arm64` | arm64 ↔ x86_64 wheel gap | `platform_machine` | pypa/manylinux |
+| `07_numpy2_abi_break` | numpy 1.26 → 2.0 C-ABI break | `version_mismatch` | NumPy 2.0 migration guide |
+
+Case files use a compact `base` + `working`/`failing` override format (a package
+mapped to `null` models "present locally, absent in CI"); see
+`evaluation/cases_loader.py`. These are *representative* reconstructions of
+common failures, not scraped verbatim, so they can be shared freely.
+
+## Current results
+
+Both corpora are scored on every push/PR. On the current corpus (11 synthetic +
+7 real-world = **18 labelled cases**, 1 noise case):
+
+- **Top-1 accuracy: 100%** &nbsp;·&nbsp; **Top-3: 100%** &nbsp;·&nbsp; **MRR: 1.000** &nbsp;·&nbsp; **0 false positives**
+
+## Contributing more cases
+
+Adding a case is a great first contribution: drop a JSON file in
+`evaluation/cases/` with a `base`, `working`/`failing` overrides, a
+`ground_truth`, and a `source`. The benchmark will pick it up automatically and
+score the engine against it.

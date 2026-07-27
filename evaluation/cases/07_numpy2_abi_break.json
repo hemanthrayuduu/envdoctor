@@ -1,0 +1,24 @@
+{
+  "name": "numpy2_abi_break",
+  "description": "Local environment has numpy 1.26; CI resolves numpy 2.0, whose C ABI and some Python APIs changed, breaking packages compiled against 1.x until they are rebuilt. A major-version drift with downstream ABI impact.",
+  "source": "https://numpy.org/doc/stable/numpy_2_0_migration_guide.html",
+  "ground_truth": {"category": "version_mismatch", "key": "numpy"},
+  "traceback": "A module that was compiled using NumPy 1.x cannot be run in NumPy 2.0.0",
+  "base": {
+    "python_version": "3.11.7",
+    "python_implementation": "CPython",
+    "platform_system": "Linux",
+    "platform_machine": "x86_64",
+    "libc": "glibc 2.35",
+    "packages": {
+      "numpy": "1.26.4",
+      "pandas": "2.2.0",
+      "scipy": "1.12.0"
+    },
+    "env_var_names": ["CI", "HOME", "PATH", "PYTHONPATH", "VIRTUAL_ENV"]
+  },
+  "working": {},
+  "failing": {
+    "packages": {"numpy": "2.0.0"}
+  }
+}

@@ -24,6 +24,7 @@ from typing import List, Optional
 from envdoctor.diff import diff_fingerprints
 from envdoctor.rank import rank_causes
 
+from .cases_loader import load_real_world_cases
 from .generate import Case, generate_cases
 
 MIN_TOP1 = 0.90
@@ -106,12 +107,32 @@ def _report(metrics: Metrics, cases: List[Case]) -> str:
     return "\n".join(lines)
 
 
-def main() -> int:
-    cases = generate_cases()
+def _section(title: str, cases: List[Case]) -> Metrics:
     metrics = evaluate(cases)
-    print(_report(metrics, cases))
-    ok = metrics.top1 >= MIN_TOP1 and metrics.false_positives <= MAX_FALSE_POSITIVES
+    print(_report(metrics, cases).replace("EnvDoctor ranking benchmark", title, 1))
     print()
+    return metrics
+
+
+def main() -> int:
+    synthetic = generate_cases()
+    real_world = load_real_world_cases()
+
+    _section("Synthetic corpus", synthetic)
+    if real_world:
+        _section("Real-world corpus", real_world)
+
+    combined = synthetic + real_world
+    metrics = evaluate(combined)
+    print("Combined")
+    print("=" * 8)
+    print(f"Top-1 accuracy : {metrics.top1:.0%}  ({metrics.total_labelled} labelled cases)")
+    print(f"Top-3 accuracy : {metrics.top3:.0%}")
+    print(f"MRR            : {metrics.mrr:.3f}")
+    print(f"False positives: {metrics.false_positives}  ({metrics.total_noise} noise cases)")
+    print()
+
+    ok = metrics.top1 >= MIN_TOP1 and metrics.false_positives <= MAX_FALSE_POSITIVES
     if ok:
         print(f"PASS (Top-1 >= {MIN_TOP1:.0%}, false positives <= {MAX_FALSE_POSITIVES})")
         return 0

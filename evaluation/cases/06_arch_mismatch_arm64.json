@@ -1,0 +1,23 @@
+{
+  "name": "arch_mismatch_arm64",
+  "description": "Builds on an Apple Silicon / arm64 dev laptop but the CI runner is x86_64 (or vice versa). A package ships wheels for one architecture only, so the other falls back to a source build that fails or a missing binary. An architecture drift.",
+  "source": "https://github.com/pypa/manylinux (per-architecture wheels)",
+  "ground_truth": {"category": "platform_machine", "key": "platform_machine"},
+  "traceback": "ERROR: Could not find a version that satisfies the requirement grpcio (no matching distribution for aarch64)",
+  "base": {
+    "python_version": "3.11.6",
+    "python_implementation": "CPython",
+    "platform_system": "Linux",
+    "platform_machine": "aarch64",
+    "libc": "glibc 2.35",
+    "packages": {
+      "grpcio": "1.60.0",
+      "numpy": "1.26.3"
+    },
+    "env_var_names": ["CI", "HOME", "PATH", "VIRTUAL_ENV"]
+  },
+  "working": {},
+  "failing": {
+    "platform_machine": "x86_64"
+  }
+}

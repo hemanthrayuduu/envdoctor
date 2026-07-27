@@ -1,0 +1,24 @@
+{
+  "name": "python312_removed_distutils",
+  "description": "Code works on Python 3.11 locally but the CI image upgraded to Python 3.12, where distutils was removed from the standard library, so an 'import distutils' fails. A Python-minor-version drift.",
+  "source": "https://docs.python.org/3/whatsnew/3.12.html#removed",
+  "ground_truth": {"category": "python_version", "key": "python"},
+  "traceback": "ModuleNotFoundError: No module named 'distutils'",
+  "base": {
+    "python_version": "3.11.7",
+    "python_implementation": "CPython",
+    "platform_system": "Linux",
+    "platform_machine": "x86_64",
+    "libc": "glibc 2.35",
+    "packages": {
+      "setuptools": "69.0.3",
+      "numpy": "1.26.3",
+      "wheel": "0.42.0"
+    },
+    "env_var_names": ["CI", "HOME", "PATH", "PYTHONPATH", "VIRTUAL_ENV"]
+  },
+  "working": {},
+  "failing": {
+    "python_version": "3.12.1"
+  }
+}
