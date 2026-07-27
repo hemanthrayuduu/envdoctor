@@ -1,0 +1,24 @@
+{
+  "name": "alpine_musl_wheel",
+  "description": "Works on a glibc-based dev machine but the CI runner uses an Alpine (musl) image. Many compiled wheels are glibc-only (manylinux), so the package fails to import on musl. A libc drift that lockfiles do not capture.",
+  "source": "https://peps.python.org/pep-0656/ (musllinux wheels)",
+  "ground_truth": {"category": "libc", "key": "libc"},
+  "traceback": "ImportError: Error loading shared library libc.musl-x86_64.so.1: No such file or directory (needed by _psycopg.so)",
+  "base": {
+    "python_version": "3.11.6",
+    "python_implementation": "CPython",
+    "platform_system": "Linux",
+    "platform_machine": "x86_64",
+    "libc": "glibc 2.35",
+    "packages": {
+      "psycopg2-binary": "2.9.9",
+      "pandas": "2.1.4",
+      "numpy": "1.26.3"
+    },
+    "env_var_names": ["CI", "DATABASE_URL", "HOME", "PATH", "VIRTUAL_ENV"]
+  },
+  "working": {},
+  "failing": {
+    "libc": "musl 1.2.4"
+  }
+}

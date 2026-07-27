@@ -126,7 +126,11 @@ See [`envdoctor/rank.py`](envdoctor/rank.py) for the exact rules.
 ## Evaluation
 
 Because "ranks by likely cause" is an empirical claim, EnvDoctor ships a
-benchmark that measures it. See **[EVALUATION.md](EVALUATION.md)**.
+benchmark that measures it against both a synthetic fault injector and a curated
+**real-world** corpus (missing test plugins, urllib3 v2, Python 3.12 dropping
+`distutils`, Alpine/musl wheel gaps, NumPy 2.0 ABI breaks, …). On the current
+corpus (18 labelled cases): **Top-1 100%, MRR 1.000, 0 false positives.** See
+**[EVALUATION.md](EVALUATION.md)**.
 
 ```bash
 python -m evaluation.benchmark
