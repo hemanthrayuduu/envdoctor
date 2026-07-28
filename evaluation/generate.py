@@ -13,8 +13,8 @@ import copy
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
 
-from envdoctor import diff as _d
-from envdoctor.model import Fingerprint
+from envfixer import diff as _d
+from envfixer.model import Fingerprint
 
 _BASE = {
     "python_version": "3.11.5",

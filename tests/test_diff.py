@@ -1,8 +1,8 @@
 import unittest
 
-from envdoctor import diff as d
-from envdoctor.diff import diff_fingerprints
-from envdoctor.model import Fingerprint
+from envfixer import diff as d
+from envfixer.diff import diff_fingerprints
+from envfixer.model import Fingerprint
 
 
 def fp(**overrides):

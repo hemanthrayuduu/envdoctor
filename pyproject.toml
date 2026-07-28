@@ -3,14 +3,14 @@ requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "envdoctor"
+name = "envfixer"
 version = "0.1.0"
 description = "Root-cause diagnosis for 'passes locally, fails in CI' — ranks the likely cause of environment drift and prints a plain-English fix."
 readme = "README.md"
 requires-python = ">=3.8"
 license = { text = "MIT" }
 keywords = ["ci", "environment", "diagnostics", "dependencies", "debugging", "reproducibility"]
-authors = [{ name = "EnvDoctor contributors" }]
+authors = [{ name = "EnvFixer contributors" }]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Console",
@@ -33,10 +33,10 @@ Issues = "https://github.com/hemanthrayuduu/envdoctor/issues"
 dev = ["pytest>=7"]
 
 [project.scripts]
-envdoctor = "envdoctor.cli:main"
+envfixer = "envfixer.cli:main"
 
 [tool.setuptools]
-packages = ["envdoctor"]
+packages = ["envfixer"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -3,7 +3,7 @@
 Renders ranked causes (from ``diff``) or findings (from ``check``) as human
 text, JSON, Markdown (for PR comments) or SARIF 2.1.0 (for inline CI
 annotations). Also decides the process exit code via ``--fail-on`` so
-EnvDoctor works as a CI guardrail, not just a report.
+EnvFixer works as a CI guardrail, not just a report.
 """
 
 from __future__ import annotations
@@ -58,7 +58,7 @@ def _bar(score: int, width: int = 20) -> str:
 
 def render_human(items, title: str) -> str:
     rows = _normalize(items)
-    lines = [f"EnvDoctor — {title}", "=" * (12 + len(title)), ""]
+    lines = [f"EnvFixer — {title}", "=" * (12 + len(title)), ""]
     if not rows:
         lines.append("No likely causes found. The environments look equivalent. ✓")
         return "\n".join(lines)
@@ -86,7 +86,7 @@ def render_json(items, title: str) -> str:
 
 def render_markdown(items, title: str) -> str:
     rows = _normalize(items)
-    lines = [f"### EnvDoctor — {title}", ""]
+    lines = [f"### EnvFixer — {title}", ""]
     if not rows:
         lines.append("No likely causes found — the environments look equivalent. ✓")
         return "\n".join(lines) + "\n"
@@ -129,7 +129,7 @@ def render_sarif(items, title: str) -> str:
             {
                 "tool": {
                     "driver": {
-                        "name": "EnvDoctor",
+                        "name": "EnvFixer",
                         "informationUri": "https://github.com/hemanthrayuduu/envdoctor",
                         "rules": list(rules.values()),
                     }

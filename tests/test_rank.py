@@ -1,8 +1,8 @@
 import unittest
 
-from envdoctor import diff as d
-from envdoctor.diff import Difference
-from envdoctor.rank import rank_causes
+from envfixer import diff as d
+from envfixer.diff import Difference
+from envfixer.rank import rank_causes
 
 
 def rank(diffs, **kw):

@@ -1,4 +1,4 @@
-"""The ranking engine — the core of EnvDoctor.
+"""The ranking engine — the core of EnvFixer.
 
 Given the structural differences between a working and a failing environment,
 score each by how likely it is to be the *actual cause* of the failure, and

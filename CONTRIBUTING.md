@@ -1,6 +1,6 @@
-# Contributing to EnvDoctor
+# Contributing to EnvFixer
 
-Thanks for your interest! EnvDoctor is a small, focused, zero-dependency tool,
+Thanks for your interest! EnvFixer is a small, focused, zero-dependency tool,
 and it's designed to be easy to contribute to.
 
 ## Development setup
@@ -23,19 +23,19 @@ Top-1 accuracy below 90% or introduce a high-confidence false positive.
 
 ## Great first contributions
 
-EnvDoctor's value lives in two accumulating knowledge assets — both are easy,
+EnvFixer's value lives in two accumulating knowledge assets — both are easy,
 high-impact places to help:
 
 1. **New fault scenarios** in `evaluation/generate.py`. More labelled cases =
    a more trustworthy ranking. Add a `Case`, give it a ground truth, and the
    benchmark will score the engine against it.
-2. **New or better fixes** in `envdoctor/fixes.py`. Clearer, more actionable
+2. **New or better fixes** in `envfixer/fixes.py`. Clearer, more actionable
    plain-English remedies directly improve the product.
 3. **Real-world mined cases** under `evaluation/cases/` (see EVALUATION.md).
 
 ## Scope discipline
 
-EnvDoctor **diagnoses** environment drift; it deliberately does not try to
+EnvFixer **diagnoses** environment drift; it deliberately does not try to
 *prevent* it (that's the job of lockfiles, `uv`, Docker). Please keep proposals
 aligned with "capture → diff/check → rank → explain → fix." Features that share
 the fingerprint and the ranking engine are welcome; a new subsystem (CVE

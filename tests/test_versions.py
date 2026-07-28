@@ -1,6 +1,6 @@
 import unittest
 
-from envdoctor.versions import VersionGap, parse_release, version_gap
+from envfixer.versions import VersionGap, parse_release, version_gap
 
 
 class TestVersions(unittest.TestCase):

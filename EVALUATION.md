@@ -1,6 +1,6 @@
 # Evaluation
 
-EnvDoctor's central claim is that it **ranks environment differences by how
+EnvFixer's central claim is that it **ranks environment differences by how
 likely each is to be the actual cause** of a failure. That is an empirical
 claim, so it is measured — not asserted — and the measurement gates CI.
 

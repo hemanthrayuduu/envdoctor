@@ -1,19 +1,19 @@
-# EnvDoctor
+# EnvFixer
 
 **Root-cause diagnosis for "passes locally, fails in CI."**
 
-EnvDoctor captures a privacy-safe fingerprint of a Python environment
+EnvFixer captures a privacy-safe fingerprint of a Python environment
 (interpreter, OS/arch/libc, installed packages, and environment-variable
 *names*), compares two of them, and **ranks the most likely cause** of an
 environment-drift failure — then prints a plain-English fix for each.
 
-Every other tool in this space stops at "here's the diff." EnvDoctor tells you
+Every other tool in this space stops at "here's the diff." EnvFixer tells you
 **which difference is probably the cause, and how to fix it.**
 
 ```text
-$ envdoctor diff local.json ci.json
+$ envfixer diff local.json ci.json
 
-EnvDoctor — diagnosis
+EnvFixer — diagnosis
 =====================
 
 3 candidate cause(s), most likely first:
@@ -40,41 +40,41 @@ EnvDoctor — diagnosis
 ## Install
 
 ```bash
-pip install envdoctor      # once published to PyPI
+pip install envfixer      # once published to PyPI
 ```
 
 ## Quick start
 
 Capture a fingerprint **inside the environment you want to snapshot** (run it in
-the target virtualenv, e.g. `python -m envdoctor capture`, so you fingerprint
+the target virtualenv, e.g. `python -m envfixer capture`, so you fingerprint
 the right interpreter):
 
 ```bash
 # on your machine
-python -m envdoctor capture -o local.json
+python -m envfixer capture -o local.json
 
 # in CI
-python -m envdoctor capture -o ci.json
+python -m envfixer capture -o ci.json
 ```
 
 Diagnose the difference (first argument = where it **works**, second = where it
 **fails**):
 
 ```bash
-envdoctor diff local.json ci.json
+envfixer diff local.json ci.json
 ```
 
 Have the failing traceback? Pass it — differences it names are boosted to
 near-certainty:
 
 ```bash
-envdoctor diff local.json ci.json --traceback ci-error.log
+envfixer diff local.json ci.json --traceback ci-error.log
 ```
 
 Health-check a single environment (no second fingerprint needed):
 
 ```bash
-envdoctor check
+envfixer check
 ```
 
 ## Commands
@@ -99,13 +99,13 @@ Shared reporting flags on `diff`/`check`:
 - uses: actions/checkout@v4
 - uses: actions/setup-python@v5
   with: { python-version: '3.11' }
-- run: pip install -e . && pip install envdoctor
-- run: python -m envdoctor capture -o ci.json
+- run: pip install -e . && pip install envfixer
+- run: python -m envfixer capture -o ci.json
 # compare against a committed baseline captured locally
-- run: envdoctor diff local.json ci.json --format markdown --fail-on high
+- run: envfixer diff local.json ci.json --format markdown --fail-on high
 ```
 
-A reusable composite action lives in [`.github/actions/envdoctor`](.github/actions/envdoctor).
+A reusable composite action lives in [`.github/actions/envfixer`](.github/actions/envfixer).
 
 ## How the ranking works
 
@@ -121,11 +121,11 @@ comes with a human-readable rationale. In brief:
   `AWS_*`, `PYTHONPATH` score high; shell noise like `SHLVL`/`TERM` is dropped.
 - **A provided traceback** strongly boosts any difference it names.
 
-See [`envdoctor/rank.py`](envdoctor/rank.py) for the exact rules.
+See [`envfixer/rank.py`](envfixer/rank.py) for the exact rules.
 
 ## Evaluation
 
-Because "ranks by likely cause" is an empirical claim, EnvDoctor ships a
+Because "ranks by likely cause" is an empirical claim, EnvFixer ships a
 benchmark that measures it against both a synthetic fault injector and a curated
 **real-world** corpus (missing test plugins, urllib3 v2, Python 3.12 dropping
 `distutils`, Alpine/musl wheel gaps, NumPy 2.0 ABI breaks, …). On the current
@@ -138,14 +138,14 @@ python -m evaluation.benchmark
 
 ## Privacy
 
-EnvDoctor **never** reads environment-variable *values*, only their names. The
+EnvFixer **never** reads environment-variable *values*, only their names. The
 fingerprint is human-readable JSON; inspect it before sharing.
 
 ## Contributing
 
 Issues and PRs welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). Good first
 contributions: new fault scenarios in `evaluation/generate.py` and new remedies
-in `envdoctor/fixes.py`.
+in `envfixer/fixes.py`.
 
 ## License
 

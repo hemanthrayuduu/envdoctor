@@ -1,7 +1,7 @@
 import unittest
 
-from envdoctor.diff import diff_fingerprints
-from envdoctor.rank import rank_causes
+from envfixer.diff import diff_fingerprints
+from envfixer.rank import rank_causes
 from evaluation.benchmark import evaluate
 from evaluation.cases_loader import load_real_world_cases
 

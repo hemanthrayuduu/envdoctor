@@ -66,7 +66,7 @@ class Fingerprint:
         """Capture the fingerprint of the *current* interpreter.
 
         IMPORTANT: run this inside the target virtualenv (``python -m
-        envdoctor capture``); a global install fingerprints the wrong
+        envfixer capture``); a global install fingerprints the wrong
         environment.
         """
         return cls(
@@ -100,7 +100,7 @@ class Fingerprint:
         } - set(data)
         if missing:
             raise ValueError(
-                f"not a valid EnvDoctor fingerprint; missing keys: {sorted(missing)}"
+                f"not a valid EnvFixer fingerprint; missing keys: {sorted(missing)}"
             )
         payload = {k: v for k, v in data.items() if k in known}
         # Normalize package names defensively so diffs never miss a match on

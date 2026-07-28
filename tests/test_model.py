@@ -3,7 +3,7 @@ import os
 import tempfile
 import unittest
 
-from envdoctor.model import Fingerprint, normalize_package_name
+from envfixer.model import Fingerprint, normalize_package_name
 
 
 class TestNormalize(unittest.TestCase):

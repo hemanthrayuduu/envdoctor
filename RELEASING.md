@@ -1,4 +1,4 @@
-# Releasing EnvDoctor to PyPI
+# Releasing EnvFixer to PyPI
 
 Publishing is automated with [PyPI Trusted Publishing](https://docs.pypi.org/trusted-publishers/)
 (OIDC) — **no API tokens or secrets are stored anywhere.** A GitHub Release
@@ -12,7 +12,7 @@ automated.
 1. Create a PyPI account at https://pypi.org/account/register/ (skip if you have one).
 2. Go to **https://pypi.org/manage/account/publishing/** and add a
    **"pending" trusted publisher** with exactly these values:
-   - **PyPI project name:** `envdoctor`
+   - **PyPI project name:** `envfixer`
    - **Owner:** `hemanthrayuduu`
    - **Repository name:** `envdoctor`
    - **Workflow name:** `release.yml`
@@ -26,7 +26,7 @@ form — the project is created automatically on the first successful publish.
 ## Cutting a release
 
 1. Bump `version` in `pyproject.toml` (and `__version__` in
-   `envdoctor/__init__.py`) following semver.
+   `envfixer/__init__.py`) following semver.
 2. Commit that on a branch and merge to `main` via PR.
 3. Tag and publish a GitHub Release whose tag matches the version:
    ```bash
@@ -39,8 +39,8 @@ form — the project is created automatically on the first successful publish.
 ## Verify
 
 ```bash
-python -m venv /tmp/envtest && /tmp/envtest/bin/pip install envdoctor
-/tmp/envtest/bin/envdoctor --version
+python -m venv /tmp/envtest && /tmp/envtest/bin/pip install envfixer
+/tmp/envtest/bin/envfixer --version
 ```
 
 ## Notes

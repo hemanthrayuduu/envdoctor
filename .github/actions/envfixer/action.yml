@@ -1,4 +1,4 @@
-name: "EnvDoctor"
+name: "EnvFixer"
 description: "Diagnose environment drift ('passes locally, fails in CI') and gate the build."
 branding:
   icon: "activity"
@@ -33,23 +33,23 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Install EnvDoctor
+    - name: Install EnvFixer
       shell: bash
-      run: python -m pip install --quiet envdoctor
+      run: python -m pip install --quiet envfixer
 
-    - name: Run EnvDoctor
+    - name: Run EnvFixer
       shell: bash
       run: |
         set -euo pipefail
         args=(--format "${{ inputs.format }}" --fail-on "${{ inputs.fail-on }}")
         if [ "${{ inputs.command }}" = "check" ]; then
-          python -m envdoctor check "${args[@]}"
+          python -m envfixer check "${args[@]}"
         else
           if [ ! -f "${{ inputs.failing }}" ]; then
-            python -m envdoctor capture -o "${{ inputs.failing }}"
+            python -m envfixer capture -o "${{ inputs.failing }}"
           fi
           if [ -n "${{ inputs.traceback }}" ]; then
             args+=(--traceback "${{ inputs.traceback }}")
           fi
-          python -m envdoctor diff "${{ inputs.working }}" "${{ inputs.failing }}" "${args[@]}"
+          python -m envfixer diff "${{ inputs.working }}" "${{ inputs.failing }}" "${args[@]}"
         fi

@@ -1,6 +1,6 @@
-"""EnvDoctor — root-cause diagnosis for "passes locally, fails in CI".
+"""EnvFixer — root-cause diagnosis for "passes locally, fails in CI".
 
-EnvDoctor captures a privacy-safe fingerprint of a Python environment
+EnvFixer captures a privacy-safe fingerprint of a Python environment
 (interpreter, platform, installed packages and *env-var names only*) and
 compares two of them to rank the most likely cause of an environment-drift
 failure — then prints a plain-English fix for each.
