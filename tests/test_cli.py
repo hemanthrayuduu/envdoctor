@@ -5,8 +5,8 @@ import tempfile
 import unittest
 from contextlib import redirect_stdout, redirect_stderr
 
-from envdoctor.cli import main
-from envdoctor.model import Fingerprint
+from envfixer.cli import main
+from envfixer.model import Fingerprint
 
 
 class TestCLI(unittest.TestCase):

@@ -15,5 +15,5 @@ venv/
 .coverage
 htmlcov/
 
-# Local fingerprints produced by envdoctor
-*.envdoctor.json
+# Local fingerprints produced by envfixer
+*.envfixer.json

@@ -20,10 +20,10 @@ from .report import RENDERERS, exit_code, render
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="envdoctor",
+        prog="envfixer",
         description="Root-cause diagnosis for 'passes locally, fails in CI'.",
     )
-    parser.add_argument("--version", action="version", version=f"envdoctor {__version__}")
+    parser.add_argument("--version", action="version", version=f"envfixer {__version__}")
     sub = parser.add_subparsers(dest="command", required=True)
 
     p_cap = sub.add_parser("capture", help="capture this environment's fingerprint")
@@ -108,7 +108,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     try:
         return _DISPATCH[args.command](args)
     except (FileNotFoundError, ValueError) as exc:
-        print(f"envdoctor: error: {exc}", file=sys.stderr)
+        print(f"envfixer: error: {exc}", file=sys.stderr)
         return 2
 
 

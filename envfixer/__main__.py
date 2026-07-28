@@ -1,4 +1,4 @@
-"""Enable ``python -m envdoctor``."""
+"""Enable ``python -m envfixer``."""
 
 from .cli import main
 

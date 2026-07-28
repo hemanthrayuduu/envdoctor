@@ -21,8 +21,8 @@ import sys
 from dataclasses import dataclass
 from typing import List, Optional
 
-from envdoctor.diff import diff_fingerprints
-from envdoctor.rank import rank_causes
+from envfixer.diff import diff_fingerprints
+from envfixer.rank import rank_causes
 
 from .cases_loader import load_real_world_cases
 from .generate import Case, generate_cases
@@ -86,7 +86,7 @@ def evaluate(cases: Optional[List[Case]] = None) -> Metrics:
 
 
 def _report(metrics: Metrics, cases: List[Case]) -> str:
-    lines = ["EnvDoctor ranking benchmark", "=" * 27, ""]
+    lines = ["EnvFixer ranking benchmark", "=" * 27, ""]
     for case in cases:
         if case.ground_truth is None:
             fp = _has_high_confidence(case)
@@ -109,7 +109,7 @@ def _report(metrics: Metrics, cases: List[Case]) -> str:
 
 def _section(title: str, cases: List[Case]) -> Metrics:
     metrics = evaluate(cases)
-    print(_report(metrics, cases).replace("EnvDoctor ranking benchmark", title, 1))
+    print(_report(metrics, cases).replace("EnvFixer ranking benchmark", title, 1))
     print()
     return metrics
 

@@ -37,7 +37,7 @@ jobs:
     # Must match the environment configured in the PyPI Trusted Publisher.
     environment:
       name: pypi
-      url: https://pypi.org/p/envdoctor
+      url: https://pypi.org/p/envfixer
     permissions:
       id-token: write   # required for Trusted Publishing (OIDC)
     steps:

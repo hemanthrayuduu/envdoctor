@@ -2,7 +2,7 @@
 
 This module is intentionally a *library of remedies* keyed by difference
 category — it is the accumulated knowledge asset of the project. Each function
-turns a structured :class:`~envdoctor.diff.Difference` into an actionable
+turns a structured :class:`~envfixer.diff.Difference` into an actionable
 sentence a developer can follow without further research.
 """
 

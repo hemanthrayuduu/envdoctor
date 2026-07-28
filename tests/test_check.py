@@ -1,6 +1,6 @@
 import unittest
 
-from envdoctor.check import (
+from envfixer.check import (
     MISSING_DEPENDENCY,
     _requirement_name,
     analyze_dependencies,

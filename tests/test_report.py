@@ -1,10 +1,10 @@
 import json
 import unittest
 
-from envdoctor import diff as d
-from envdoctor.diff import Difference
-from envdoctor.rank import rank_causes
-from envdoctor.report import exit_code, render
+from envfixer import diff as d
+from envfixer.diff import Difference
+from envfixer.rank import rank_causes
+from envfixer.report import exit_code, render
 
 
 def sample_causes():
@@ -36,7 +36,7 @@ class TestReport(unittest.TestCase):
         out = render(sample_causes(), "diagnosis", "sarif")
         parsed = json.loads(out)
         self.assertEqual(parsed["version"], "2.1.0")
-        self.assertEqual(parsed["runs"][0]["tool"]["driver"]["name"], "EnvDoctor")
+        self.assertEqual(parsed["runs"][0]["tool"]["driver"]["name"], "EnvFixer")
         self.assertTrue(parsed["runs"][0]["results"])
 
     def test_empty_human_output(self):
