@@ -1,5 +1,10 @@
 # EnvFixer
 
+[![PyPI version](https://img.shields.io/pypi/v/envfixer.svg)](https://pypi.org/project/envfixer/)
+[![Python versions](https://img.shields.io/pypi/pyversions/envfixer.svg)](https://pypi.org/project/envfixer/)
+[![CI](https://github.com/hemanthrayuduu/envdoctor/actions/workflows/ci.yml/badge.svg)](https://github.com/hemanthrayuduu/envdoctor/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 **Root-cause diagnosis for "passes locally, fails in CI."**
 
 EnvFixer captures a privacy-safe fingerprint of a Python environment
@@ -40,7 +45,7 @@ EnvFixer — diagnosis
 ## Install
 
 ```bash
-pip install envfixer      # once published to PyPI
+pip install envfixer
 ```
 
 ## Quick start
@@ -99,8 +104,8 @@ Shared reporting flags on `diff`/`check`:
 - uses: actions/checkout@v4
 - uses: actions/setup-python@v5
   with: { python-version: '3.11' }
-- run: pip install -e . && pip install envfixer
-- run: python -m envfixer capture -o ci.json
+- run: pip install envfixer
+- run: envfixer capture -o ci.json
 # compare against a committed baseline captured locally
 - run: envfixer diff local.json ci.json --format markdown --fail-on high
 ```

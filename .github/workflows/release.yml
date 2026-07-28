@@ -47,3 +47,8 @@ jobs:
           path: dist/
       - name: Publish
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # Don't fail if this version is already on PyPI (e.g. re-running a
+          # release, or a GitHub Release re-triggering the workflow). PyPI
+          # versions are immutable, so an existing file is simply skipped.
+          skip-existing: true
