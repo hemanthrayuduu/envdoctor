@@ -154,6 +154,22 @@ def _base_score(d: Difference) -> tuple:
             return 35, "C library differs but one side is unknown; treat as a weaker signal."
         return 50, "The system C library differs, which can affect compiled extensions."
 
+    if category == _d.TIMEZONE:
+        return 48, (
+            "The timezone differs; date/time logic and tests that assume a local "
+            "day boundary commonly break when CI runs UTC."
+        )
+
+    if category == _d.LOCALE:
+        values = f"{d.working_value} {d.failing_value}".lower()
+        if "utf" in values and not all("utf" in v.lower() for v in
+                                       (d.working_value or "", d.failing_value or "")):
+            return 56, (
+                "One side is UTF-8 and the other is not; non-ASCII text will raise "
+                "UnicodeEncodeError/UnicodeDecodeError where it previously worked."
+            )
+        return 44, "The preferred text encoding differs, which can break non-ASCII I/O."
+
     if category == _d.PLATFORM_SYSTEM:
         return 52, "The operating system differs, which changes paths, encodings and system libs."
 

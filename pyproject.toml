@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "envfixer"
-version = "0.1.0"
+version = "0.2.0"
 description = "Root-cause diagnosis for 'passes locally, fails in CI' — ranks the likely cause of environment drift and prints a plain-English fix."
 readme = "README.md"
 requires-python = ">=3.8"

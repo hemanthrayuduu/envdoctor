@@ -1,0 +1,26 @@
+{
+  "name": "ascii_locale_unicode_error",
+  "description": "Code that writes non-ASCII text works on a UTF-8 developer machine but raises UnicodeEncodeError in a minimal CI container whose default locale is POSIX/C (ASCII), so Python's preferred encoding is ANSI_X3.4-1968.",
+  "source": "https://peps.python.org/pep-0540/ (UTF-8 mode; C locale encoding pitfalls)",
+  "ground_truth": {"category": "locale", "key": "locale_encoding"},
+  "traceback": "UnicodeEncodeError: 'ascii' codec can't encode character '\\u2713' in position 3: ordinal not in range(128)",
+  "base": {
+    "python_version": "3.11.7",
+    "python_implementation": "CPython",
+    "platform_system": "Linux",
+    "platform_machine": "x86_64",
+    "libc": "glibc 2.35",
+    "timezone": "UTC+00:00",
+    "locale_encoding": "UTF-8",
+    "packages": {
+      "click": "8.1.7",
+      "rich": "13.7.0",
+      "pytest": "7.4.4"
+    },
+    "env_var_names": ["CI", "HOME", "LANG", "LC_ALL", "PATH", "VIRTUAL_ENV"]
+  },
+  "working": {},
+  "failing": {
+    "locale_encoding": "ANSI_X3.4-1968"
+  }
+}

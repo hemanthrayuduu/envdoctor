@@ -76,19 +76,33 @@ near-certainty:
 envfixer diff local.json ci.json --traceback ci-error.log
 ```
 
-Health-check a single environment (no second fingerprint needed):
+Health-check a single environment (no second fingerprint needed) — finds
+missing dependencies *and* version conflicts, each with a fix:
 
 ```bash
 envfixer check
 ```
+
+**No EnvFixer in the failing environment?** Diagnose it from its logs. Any
+`pip freeze` output works as an input, so you never have to install anything in
+the broken container:
+
+```bash
+envfixer capture --from-freeze ci-freeze.txt --python-version 3.9.18 -o ci.json
+envfixer diff local.json ci.json
+```
+
+Anything the dump cannot tell us (OS, env vars, timezone…) stays `unknown` and
+is **skipped** when diffing — a partial fingerprint never invents a difference.
 
 ## Commands
 
 | Command | What it does |
 |---------|--------------|
 | `capture [-o FILE]` | Write this environment's fingerprint (stdout by default). |
+| `capture --from-freeze FILE` | Build a fingerprint from a `pip freeze`/requirements dump (`-` = stdin). |
 | `diff WORKING FAILING [--traceback FILE]` | Rank the likely causes of the failure. |
-| `check [FINGERPRINT]` | Surface broken dependency chains in one environment. |
+| `check [FINGERPRINT]` | Surface missing dependencies and version conflicts in one environment. |
 
 Shared reporting flags on `diff`/`check`:
 
@@ -122,6 +136,8 @@ comes with a human-readable rationale. In brief:
 - **Version mismatches** are scored by blast radius (major > minor > patch).
 - **Python / libc / arch** differences are scored by how often they actually
   break code (e.g. glibc-vs-musl is weighted heavily).
+- **Timezone and locale/encoding** drift is scored too — the UTC-CI date bug
+  and the ASCII-locale `UnicodeEncodeError` are real causes no lockfile sees.
 - **Env-var names** are filtered by significance: `DATABASE_URL`, `*_TOKEN`,
   `AWS_*`, `PYTHONPATH` score high; shell noise like `SHLVL`/`TERM` is dropped.
 - **A provided traceback** strongly boosts any difference it names.
@@ -133,8 +149,9 @@ See [`envfixer/rank.py`](envfixer/rank.py) for the exact rules.
 Because "ranks by likely cause" is an empirical claim, EnvFixer ships a
 benchmark that measures it against both a synthetic fault injector and a curated
 **real-world** corpus (missing test plugins, urllib3 v2, Python 3.12 dropping
-`distutils`, Alpine/musl wheel gaps, NumPy 2.0 ABI breaks, …). On the current
-corpus (18 labelled cases): **Top-1 100%, MRR 1.000, 0 false positives.** See
+`distutils`, Alpine/musl wheel gaps, NumPy 2.0 ABI breaks, UTC timezone drift,
+ASCII-locale encoding errors, …). On the current
+corpus (23 labelled cases): **Top-1 100%, MRR 1.000, 0 false positives.** See
 **[EVALUATION.md](EVALUATION.md)**.
 
 ```bash

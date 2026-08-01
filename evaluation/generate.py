@@ -44,8 +44,10 @@ _BASE = {
         "AWS_REGION", "CI", "DATABASE_URL", "HOME", "LANG", "PATH", "PWD",
         "PYTHONPATH", "SHLVL", "TERM", "USER", "VIRTUAL_ENV",
     ],
+    "timezone": "IST+05:30",
+    "locale_encoding": "UTF-8",
     "captured_at": "2026-07-27T00:00:00+00:00",
-    "schema_version": 1,
+    "schema_version": 2,
 }
 
 
@@ -151,7 +153,30 @@ def generate_cases() -> List[Case]:
     cases.append(Case("missing_package_with_traceback", _fp(_base()), _fp(fail),
                       (_d.PACKAGE_MISSING, "pandas"), traceback=tb))
 
-    # 12. Pure noise: no real cause; must NOT produce a high-confidence result.
+    # 12. Timezone drift (laptop local time vs UTC CI runner).
+    fail = _base()
+    fail["timezone"] = "UTC+00:00"
+    cases.append(Case("timezone_drift", _fp(_base()), _fp(fail),
+                      (_d.TIMEZONE, "timezone")))
+
+    # 13. Locale/encoding drift (UTF-8 locally, ASCII in CI).
+    fail = _base()
+    fail["locale_encoding"] = "ANSI_X3.4-1968"
+    cases.append(Case("locale_ascii_drift", _fp(_base()), _fp(fail),
+                      (_d.LOCALE, "locale_encoding")))
+
+    # 14. Partial fingerprint (synthesized from a freeze dump): everything the
+    #     dump cannot know must be skipped, leaving only the real cause.
+    working = _base()
+    partial = Fingerprint.from_freeze(
+        "\n".join(f"{name}=={version}"
+                  for name, version in sorted(_BASE["packages"].items())
+                  if name != "pydantic")
+    )
+    cases.append(Case("partial_freeze_fingerprint", _fp(working), partial,
+                      (_d.PACKAGE_MISSING, "pydantic")))
+
+    # 15. Pure noise: no real cause; must NOT produce a high-confidence result.
     fail = _base()
     _add_noise(fail)
     cases.append(Case("pure_noise", _fp(_base()), _fp(fail), None))
