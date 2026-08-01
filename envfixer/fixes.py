@@ -78,6 +78,24 @@ def _fix_libc(d: Difference) -> str:
     )
 
 
+def _fix_timezone(d: Difference) -> str:
+    return (
+        f"Timezone differs: working is '{d.working_value}', failing is "
+        f"'{d.failing_value}'. Tests that depend on the current date can flip near "
+        f"midnight. Pin it in both places (e.g. set TZ=UTC in your shell and CI) "
+        f"or make the code timezone-explicit instead of using local time."
+    )
+
+
+def _fix_locale(d: Difference) -> str:
+    return (
+        f"Text encoding differs: working uses '{d.working_value}', failing uses "
+        f"'{d.failing_value}'. Force a UTF-8 locale in the failing environment "
+        f"(e.g. set PYTHONUTF8=1, or LANG=C.UTF-8 and LC_ALL=C.UTF-8), or pass an "
+        f"explicit encoding='utf-8' when opening files."
+    )
+
+
 def _fix_env_var_missing(d: Difference) -> str:
     return (
         f"Set the environment variable '{d.key}' in the failing environment. It "
@@ -109,6 +127,8 @@ _HANDLERS = {
     _d.PLATFORM_SYSTEM: _fix_platform_system,
     _d.PLATFORM_MACHINE: _fix_platform_machine,
     _d.LIBC: _fix_libc,
+    _d.TIMEZONE: _fix_timezone,
+    _d.LOCALE: _fix_locale,
     _d.ENV_VAR_MISSING: _fix_env_var_missing,
     _d.ENV_VAR_EXTRA: _fix_env_var_extra,
     _d.PACKAGE_EXTRA: _fix_package_extra,

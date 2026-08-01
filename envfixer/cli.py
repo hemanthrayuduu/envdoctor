@@ -13,7 +13,7 @@ from typing import List, Optional
 from . import __version__
 from .check import check_environment
 from .diff import diff_fingerprints
-from .model import Fingerprint
+from .model import UNKNOWN, Fingerprint
 from .rank import rank_causes
 from .report import RENDERERS, exit_code, render
 
@@ -30,6 +30,17 @@ def build_parser() -> argparse.ArgumentParser:
     p_cap.add_argument(
         "-o", "--output", help="write fingerprint JSON here (default: stdout)"
     )
+    p_cap.add_argument(
+        "--from-freeze",
+        metavar="FILE",
+        help="build the fingerprint from a pip freeze / requirements dump "
+             "instead of this interpreter ('-' reads stdin). Lets you diagnose "
+             "a CI failure from its logs, without installing EnvFixer there.",
+    )
+    p_cap.add_argument("--python-version", help="python version for --from-freeze")
+    p_cap.add_argument("--platform-system", help="OS for --from-freeze (e.g. Linux)")
+    p_cap.add_argument("--platform-machine", help="arch for --from-freeze (e.g. x86_64)")
+    p_cap.add_argument("--libc", help="libc for --from-freeze (e.g. 'musl 1.2.4')")
 
     p_diff = sub.add_parser(
         "diff", help="diagnose why WORKING passes but FAILING fails"
@@ -66,7 +77,21 @@ def _add_report_args(p: argparse.ArgumentParser) -> None:
 
 
 def _cmd_capture(args) -> int:
-    fp = Fingerprint.capture()
+    if args.from_freeze:
+        if args.from_freeze == "-":
+            freeze_text = sys.stdin.read()
+        else:
+            with open(args.from_freeze, "r", encoding="utf-8") as fh:
+                freeze_text = fh.read()
+        fp = Fingerprint.from_freeze(
+            freeze_text,
+            python_version=args.python_version or UNKNOWN,
+            platform_system=args.platform_system or UNKNOWN,
+            platform_machine=args.platform_machine or UNKNOWN,
+            libc=args.libc or UNKNOWN,
+        )
+    else:
+        fp = Fingerprint.capture()
     text = fp.to_json()
     if args.output:
         fp.save(args.output)

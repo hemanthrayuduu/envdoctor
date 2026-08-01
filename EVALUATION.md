@@ -18,6 +18,9 @@ realistic base environment, each scenario injects exactly one *known* fault
 | `python_minor_mismatch` | change Python 3.11 → 3.9 | `python_version` |
 | `libc_musl` | glibc → musl | `libc` |
 | `arch_mismatch` | x86_64 → aarch64 | `platform_machine` |
+| `timezone_drift` | local timezone → UTC | `timezone` |
+| `locale_ascii_drift` | UTF-8 → ASCII locale | `locale` |
+| `partial_freeze_fingerprint` | failing side synthesized from a freeze dump | the real missing package |
 | `*_with_noise` | true cause + patch bumps + shell-var churn | the true cause |
 | `*_with_traceback` | missing package + matching traceback | `package_missing` |
 | `pure_noise` | only shell-var / patch noise | **none** (must not flag) |
@@ -67,6 +70,8 @@ reference for the underlying breakage:
 | `05_missing_secret_key_env` | Django `SECRET_KEY` unset in CI | `env_var_missing` | Django settings docs |
 | `06_arch_mismatch_arm64` | arm64 ↔ x86_64 wheel gap | `platform_machine` | pypa/manylinux |
 | `07_numpy2_abi_break` | numpy 1.26 → 2.0 C-ABI break | `version_mismatch` | NumPy 2.0 migration guide |
+| `08_utc_timezone_date_test` | laptop timezone vs UTC CI runner | `timezone` | datetime docs (local-time dependence) |
+| `09_ascii_locale_unicode_error` | UTF-8 → C/POSIX ASCII locale | `locale` | PEP 540 (UTF-8 mode) |
 
 Case files use a compact `base` + `working`/`failing` override format (a package
 mapped to `null` models "present locally, absent in CI"); see
@@ -75,8 +80,8 @@ common failures, not scraped verbatim, so they can be shared freely.
 
 ## Current results
 
-Both corpora are scored on every push/PR. On the current corpus (11 synthetic +
-7 real-world = **18 labelled cases**, 1 noise case):
+Both corpora are scored on every push/PR. On the current corpus (14 synthetic +
+9 real-world = **23 labelled cases**, 1 noise case):
 
 - **Top-1 accuracy: 100%** &nbsp;·&nbsp; **Top-3: 100%** &nbsp;·&nbsp; **MRR: 1.000** &nbsp;·&nbsp; **0 false positives**
 

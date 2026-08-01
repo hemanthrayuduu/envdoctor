@@ -11,7 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import List, Optional
 
-from .model import Fingerprint
+from .model import Fingerprint, is_unknown
 
 # Difference categories (stable identifiers used by rank/fixes/report).
 PACKAGE_MISSING = "package_missing"          # in working, absent in failing
@@ -21,8 +21,38 @@ PYTHON_VERSION = "python_version"
 PLATFORM_SYSTEM = "platform_system"
 PLATFORM_MACHINE = "platform_machine"
 LIBC = "libc"
+TIMEZONE = "timezone"
+LOCALE = "locale"
 ENV_VAR_MISSING = "env_var_missing"          # name in working, absent in failing
 ENV_VAR_EXTRA = "env_var_extra"
+
+
+#: EnvFixer is the diagnostic tool, never the code under test — reporting
+#: itself as a cause is pure noise.
+_SELF = {"envfixer"}
+
+#: ``pip freeze`` conventionally omits the packaging bootstrap. When one side
+#: was synthesized from a freeze dump, their "absence" is an artifact of the
+#: format, not real drift — so we must not report it. Between two live
+#: captures these are compared normally (code really can import pkg_resources).
+_FREEZE_OMITTED = {"pip", "setuptools", "wheel", "distribute", "pkg-resources"}
+
+
+def _ignored_packages(working: Fingerprint, failing: Fingerprint) -> set:
+    ignored = set(_SELF)
+    if "freeze" in (working.source, failing.source):
+        ignored |= _FREEZE_OMITTED
+    return ignored
+
+
+def _comparable(left, right) -> bool:
+    """Only compare a field when *both* sides actually know it.
+
+    A fingerprint synthesized from a freeze dump knows nothing about the OS,
+    timezone, etc. Comparing ``unknown`` against a real value would manufacture
+    a difference that is an artifact of how we captured, not a real drift.
+    """
+    return not is_unknown(left) and not is_unknown(right)
 
 
 @dataclass
@@ -56,6 +86,8 @@ def diff_fingerprints(working: Fingerprint, failing: Fingerprint) -> List[Differ
 
 
 def _diff_interpreter(working: Fingerprint, failing: Fingerprint) -> List[Difference]:
+    if not _comparable(working.python_version, failing.python_version):
+        return []
     if working.python_version != failing.python_version:
         return [
             Difference(
@@ -74,24 +106,27 @@ def _diff_interpreter(working: Fingerprint, failing: Fingerprint) -> List[Differ
 
 def _diff_platform(working: Fingerprint, failing: Fingerprint) -> List[Difference]:
     diffs: List[Difference] = []
-    if working.platform_system != failing.platform_system:
-        diffs.append(
-            Difference(PLATFORM_SYSTEM, "platform_system",
-                       working.platform_system, failing.platform_system)
-        )
-    if working.platform_machine != failing.platform_machine:
-        diffs.append(
-            Difference(PLATFORM_MACHINE, "platform_machine",
-                       working.platform_machine, failing.platform_machine)
-        )
-    if working.libc != failing.libc:
-        diffs.append(Difference(LIBC, "libc", working.libc, failing.libc))
+    for category, key, left, right in (
+        (PLATFORM_SYSTEM, "platform_system",
+         working.platform_system, failing.platform_system),
+        (PLATFORM_MACHINE, "platform_machine",
+         working.platform_machine, failing.platform_machine),
+        (LIBC, "libc", working.libc, failing.libc),
+        (TIMEZONE, "timezone", working.timezone, failing.timezone),
+        (LOCALE, "locale_encoding",
+         working.locale_encoding, failing.locale_encoding),
+    ):
+        if _comparable(left, right) and left != right:
+            diffs.append(Difference(category, key, left, right))
     return diffs
 
 
 def _diff_packages(working: Fingerprint, failing: Fingerprint) -> List[Difference]:
     diffs: List[Difference] = []
+    ignored = _ignored_packages(working, failing)
     for name, version in sorted(working.packages.items()):
+        if name in ignored:
+            continue
         if name not in failing.packages:
             diffs.append(Difference(PACKAGE_MISSING, name, version, None))
         elif failing.packages[name] != version:
@@ -99,12 +134,18 @@ def _diff_packages(working: Fingerprint, failing: Fingerprint) -> List[Differenc
                 Difference(VERSION_MISMATCH, name, version, failing.packages[name])
             )
     for name, version in sorted(failing.packages.items()):
+        if name in ignored:
+            continue
         if name not in working.packages:
             diffs.append(Difference(PACKAGE_EXTRA, name, None, version))
     return diffs
 
 
 def _diff_env_vars(working: Fingerprint, failing: Fingerprint) -> List[Difference]:
+    # ``None`` means the environment variables are unknown for that side, not
+    # that there were none — so there is nothing trustworthy to compare.
+    if working.env_var_names is None or failing.env_var_names is None:
+        return []
     diffs: List[Difference] = []
     working_names = set(working.env_var_names)
     failing_names = set(failing.env_var_names)

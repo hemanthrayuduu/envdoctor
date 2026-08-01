@@ -1,0 +1,26 @@
+{
+  "name": "utc_timezone_date_test",
+  "description": "A test asserting on date.today() passes on a developer laptop in a non-UTC timezone but fails on the CI runner, which runs UTC — the two disagree about which calendar day it is near midnight.",
+  "source": "https://docs.python.org/3/library/datetime.html#datetime.date.today (local-time dependence)",
+  "ground_truth": {"category": "timezone", "key": "timezone"},
+  "traceback": "AssertionError: assert date(2026, 7, 28) == date(2026, 7, 27)",
+  "base": {
+    "python_version": "3.11.7",
+    "python_implementation": "CPython",
+    "platform_system": "Linux",
+    "platform_machine": "x86_64",
+    "libc": "glibc 2.35",
+    "timezone": "IST+05:30",
+    "locale_encoding": "UTF-8",
+    "packages": {
+      "pytest": "7.4.4",
+      "freezegun": "1.4.0",
+      "python-dateutil": "2.8.2"
+    },
+    "env_var_names": ["CI", "HOME", "PATH", "TZ", "VIRTUAL_ENV"]
+  },
+  "working": {},
+  "failing": {
+    "timezone": "UTC+00:00"
+  }
+}
